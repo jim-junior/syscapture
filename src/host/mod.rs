@@ -8,14 +8,23 @@ pub fn fetch_host_info() {
     let arch = get_arch();
     let cpu_count = get_cpu_count();
     let kernel_version = get_kernel_version();
+    let mem_metrics = get_mem_metrics();
 
     // ==== PRINT OUTPUT ====
-    print!("Hostname:        {}", hostname);
-    print!("Architecture:    {}", arch);
-    print!("CPU Count:       {}\n", cpu_count);
-    print!("Kernel Version:  {}", kernel_version);
-    print!("Uptime:          {}\n", uptime);
-    print!("Load:            {}", load)
+    print!("Hostname:            {}", hostname);
+    print!("Architecture:        {}", arch);
+    print!("CPU Count:           {}\n", cpu_count);
+    print!("Kernel Version:      {}", kernel_version);
+    print!("Memory Total:        {} kB\n", mem_metrics.mem_total);
+    print!("Memory Free:         {} kB\n", mem_metrics.mem_free);
+    print!("Memory Available:    {} kB\n", mem_metrics.mem_available);
+    print!("Buffers:             {} kB\n", mem_metrics.buffers);
+    print!("Cached:              {} kB\n", mem_metrics.cached);
+    print!("Swap Total:          {} kB\n", mem_metrics.swap_total);
+    print!("Swap Free:           {} kB\n", mem_metrics.swap_free);
+    print!("Slab:                {} kB\n", mem_metrics.slab);
+    print!("Uptime:              {}\n", uptime);
+    print!("Load:                {}", load)
 }
 
 fn get_load_avg() -> String {
@@ -78,4 +87,52 @@ fn get_kernel_version() -> String {
     let stdout = String::from_utf8_lossy(&output.stdout);
 
     return stdout.to_string();
+}
+
+#[derive(Debug, Default)]
+pub struct MemMetrics {
+    pub mem_total: u64,
+    pub mem_free: u64,
+    pub mem_available: u64,
+    pub buffers: u64,
+    pub cached: u64,
+    pub swap_total: u64,
+    pub swap_free: u64,
+    pub slab: u64,
+}
+
+fn get_mem_metrics() -> MemMetrics {
+    // Read the entire file into a String
+    let content = files::readfile("/proc/meminfo").expect("Failed to fetch memory info");
+
+    // Initialize our struct with default values (0)
+    let mut metrics = MemMetrics::default();
+
+    for line in content.lines() {
+        // Split each line into a key and a value at the first colon
+        // e.g., "MemTotal" and "       15165512 kB"
+        if let Some((key, value_str)) = line.split_once(':') {
+            // Extract just the first word of the value string (the number)
+            // This safely ignores the "kB" and any extra whitespace
+            if let Some(num_str) = value_str.split_whitespace().next() {
+                // Parse the string into a u64
+                if let Ok(value) = num_str.parse::<u64>() {
+                    // Match the key to our struct fields
+                    match key.trim() {
+                        "MemTotal" => metrics.mem_total = value,
+                        "MemFree" => metrics.mem_free = value,
+                        "MemAvailable" => metrics.mem_available = value,
+                        "Buffers" => metrics.buffers = value,
+                        "Cached" => metrics.cached = value,
+                        "SwapTotal" => metrics.swap_total = value,
+                        "SwapFree" => metrics.swap_free = value,
+                        "Slab" => metrics.slab = value,
+                        _ => {} // Ignore all other keys in the file
+                    }
+                }
+            }
+        }
+    }
+
+    metrics
 }
