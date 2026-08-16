@@ -12,6 +12,11 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     HostInfo,
+
+    Capture {
+        #[arg(short, long)]
+        pid: u32,
+    },
 }
 
 fn main() {
@@ -20,6 +25,9 @@ fn main() {
     match cli.command {
         Commands::HostInfo => {
             host::fetch_host_info();
+        }
+        Commands::Capture { pid } => {
+            println!("Capturing process with PID: {}", pid);
         }
     }
 }
