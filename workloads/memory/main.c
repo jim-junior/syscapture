@@ -33,7 +33,10 @@ int main(int argc, char *argv[])
   sleep(60);
 
   // Free the allocated memory
+  printf("Freeing allocated memory...\n");
   free(buffer);
+
+  printf("Memory freed. Exiting program.\n");
 
   return 0;
 }
