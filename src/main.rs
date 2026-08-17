@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 
 pub mod host;
+pub mod process;
 pub mod utils;
 
 #[derive(Parser)]
