@@ -8,6 +8,7 @@
 int main(int argc, char *argv[])
 {
 
+  int pid = getpid();
   if (argc < 3)
   {
     printf("Usage: %s <size_in_mb> <timeout>", argv[0]);
@@ -30,14 +31,14 @@ int main(int argc, char *argv[])
   memset(buffer, 0, size_in_bytes);
 
   // Keep the program running for the specified timeout to allow observation of memory usage
-  printf("Allocated %d MB of memory. Sleeping for %d seconds...\n", size_in_mb, timeout);
+  printf("[%d] Allocated %d MB of memory. Sleeping for %d seconds...\n", pid, size_in_mb, timeout);
   sleep(timeout);
 
   // Free the allocated memory
-  printf("Freeing allocated memory...\n");
+  printf("[%d] Freeing allocated memory...\n", pid);
   free(buffer);
 
-  printf("Memory freed. Exiting program.\n");
+  printf("[%d] Memory freed. Exiting program.\n", pid);
 
   return 0;
 }
