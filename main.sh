@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+source ./lib/main.sh
+
 
 function argument_error() {
   echo "Error: $1"
