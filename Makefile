@@ -5,10 +5,13 @@ MEMORY_C_SRC = workloads/memory/main.c
 MEMORY_C_TARGET = bin/memory
 ZOMBIE_C_SRC = workloads/zombie/main.c
 ZOMBIE_C_TARGET = bin/zombie
+OPENFILES_C_SRC = workloads/open_files/main.c
+OPENFILES_C_TARGET = bin/openfiles
+
 
 .PHONY: all clean
 
-all: $(MEMORY_C_TARGET) $(ZOMBIE_C_TARGET)
+all: $(MEMORY_C_TARGET) $(ZOMBIE_C_TARGET) $(OPENFILES_C_TARGET)
 
 $(MEMORY_C_TARGET): $(MEMORY_C_SRC)
 	mkdir -p bin
@@ -17,6 +20,10 @@ $(MEMORY_C_TARGET): $(MEMORY_C_SRC)
 $(ZOMBIE_C_TARGET): $(ZOMBIE_C_SRC)
 	mkdir -p bin
 	$(CC) $(CFLAGS) -o $(ZOMBIE_C_TARGET) $(ZOMBIE_C_SRC)
+
+$(OPENFILES_C_TARGET): $(OPENFILES_C_SRC)
+	mkdir -p bin
+	$(CC) $(CFLAGS) -o $(OPENFILES_C_TARGET) $(OPENFILES_C_SRC)
 
 clean:
 	rm -rf bin

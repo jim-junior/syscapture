@@ -15,12 +15,22 @@ function argument_error() {
   exit 1
 }
 
-if [ ! "$#" -ge 3 ]; then
+if [ ! "$#" -ge 2 ]; then
   argument_error "missing arguments"
 fi
 
 
-if [[ ! "$1" =~ ^(capture|doctor|watch)$ ]]; then
-  argument_error "unknown argument  \`$1\`"
-fi
+case "$1" in
+  "capture")
+    capture $2
+    ;;
+  "watch")
+    echo "Watching..."
+    sleep 10
+    ;;
+  *)
+    argument_error "unkown argument \`$1\`"
+    ;;
+esac
+
 
