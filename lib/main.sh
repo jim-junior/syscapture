@@ -15,5 +15,13 @@ function capture() {
     printf "PID  %s is nolonger running\n" "$1"
     exit 1
   fi
+
+  printf "# Diagnosis Report\n\n"
+  printf "Report for Process $1 at `date`\n\n"
+
+  printf "## Process Details\n\n"
+
+  process_stats $1
+
   process_fds $1
 }

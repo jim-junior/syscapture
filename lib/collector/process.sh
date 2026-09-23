@@ -33,3 +33,52 @@ function process_fds() {
   done;
 
 }
+
+function process_stats() {
+
+  if command -v ps &> /dev/null; then
+    ps_process_stats $1
+  else
+    proc_process_stats $1
+  fi
+
+}
+
+
+function ps_process_stats() {
+
+  ps_stats=$(ps -o state,ppid,wchan,cmd --pid "$1")
+
+  process_state=$(awk 'NR==2 {print $1}' <<< "$ps_stats")
+  process_ppid=$(awk 'NR==2 {print $2}' <<< "$ps_stats")
+  process_wchan=$(awk 'NR==2 {print $3}' <<< "$ps_stats")
+  process_cmd=$(awk 'NR==2 {print $4}' <<< "$ps_stats")
+
+  printf "Process runtime stats\n\n"
+  echo "- State: $process_state"
+  echo "- Parent Process PID: $process_ppid"
+  echo "- Wait Channel: $process_wchan"
+  echo "- Program Command: \`$process_cmd\`"
+
+  printf "\n"
+
+}
+
+
+function proc_process_stats() {
+
+  proc_status_file=$(cat "/proc/$1/status")
+  process_cmd=$(cat "/proc/$1/cmdline")
+  process_wchan=$(cat "/proc/$1/wchan")
+  process_state=$(grep "State" <<< "$proc_status_file")
+  process_state="${process_state#State:}"
+  process_ppid=$(grep "PPid" <<< "$proc_status_file")
+  process_ppid="${process_ppid#PPid:}"
+
+  printf "Process runtime stats\n\n"
+  echo "- State: $process_state"
+  echo "- Parent Process PID: $process_ppid"
+  echo "- Wait Channel: $process_wchan"
+  echo "- Program Command: \`$process_cmd\`"
+
+}
