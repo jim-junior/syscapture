@@ -82,3 +82,17 @@ function proc_process_stats() {
   echo "- Program Command: \`$process_cmd\`"
 
 }
+
+
+
+
+function process_memory_stats() {
+
+  proc_rss=$(cat "/proc/$1/smaps_rollup" | grep "Rss")
+  rss="${proc_rss#Rss:}"
+
+  proc_pss_line=$(cat "/proc/$1/smaps_rollup" | grep "Pss: ")
+  pss="${proc_pss_line#Pss:}"
+
+
+}
