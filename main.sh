@@ -15,14 +15,24 @@ function argument_error() {
   exit 1
 }
 
-if [ ! "$#" -ge 2 ]; then
+if [ ! "$#" -ge 1 ]; then
   argument_error "missing arguments"
 fi
 
 
 case "$1" in
   "capture")
-    capture $2
+    if [[ ! "$#" -lt 2 ]]; then
+      capture $2
+    else
+      read -r -p "Enter process PID: " pid
+      if [[ -n pid ]]; then
+        echo "Error: No process was provided"
+        exit 1
+      fi
+
+      capture $pid
+    fi
     ;;
   "watch")
     echo "Watching..."
