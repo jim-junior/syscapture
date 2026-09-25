@@ -42,6 +42,7 @@ function process_stats() {
     proc_process_stats $1
   fi
 
+  process_memory_stats $1
 }
 
 
@@ -81,6 +82,7 @@ function proc_process_stats() {
   echo "- Wait Channel: $process_wchan"
   echo "- Program Command: \`$process_cmd\`"
 
+  echo
 }
 
 
@@ -91,8 +93,16 @@ function process_memory_stats() {
   proc_rss=$(cat "/proc/$1/smaps_rollup" | grep "Rss")
   rss="${proc_rss#Rss:}"
 
-  proc_pss_line=$(cat "/proc/$1/smaps_rollup" | grep "Pss: ")
+  proc_pss_line=$(cat "/proc/$1/smaps_rollup" | grep '^Pss: ')
   pss="${proc_pss_line#Pss:}"
 
+
+  uss=$(awk '/Private_/ {sum += $2} END {print sum "kb"}' "/proc/$1/smaps_rollup")
+
+  printf "Process Memory Stats\n\n"
+
+  echo "- RSS: $rss"
+  echo "- PSS: $pss"
+  echo "- USS: $uss"
 
 }
