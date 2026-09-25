@@ -105,4 +105,6 @@ function process_memory_stats() {
   echo "- PSS: $pss"
   echo "- USS: $uss"
 
+  host_momory
+
 }
