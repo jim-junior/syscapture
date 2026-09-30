@@ -12,10 +12,14 @@ function host_momory() {
 
 
   cat << EOF
+
+Host Memory Stats
+
 | Type | Total | Used | Available / Free |
 | :--- | :--- | :--- | :--- |
 | **RAM** | $total_mem | $used_mem | $available_mem |
 | **Swap** | $total_swap | $used_swap | $free_swap |
+
 EOF
 
 

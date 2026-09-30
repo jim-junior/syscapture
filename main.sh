@@ -11,7 +11,7 @@ source "${SCRIPT_DIR}/lib/main.sh"
 function argument_error() {
   echo "Error: $1"
   echo
-  echo "Usage: $0 <command> [...PIDS|SYSTEMD_UNIT]"
+  echo "Usage: $0 <command> pid=[...PIDS] unit=[SYSTEMD_UNIT] out=[FILE]"
   exit 1
 }
 
@@ -20,18 +20,39 @@ if [ ! "$#" -ge 1 ]; then
 fi
 
 
+# extract params
+
+pid=
+outfile=
+
+for arg in "$@"; do
+  if [[ "$arg" =~ ^pid=.+ ]]; then
+    pid="${arg#pid=}"
+    echo "PID: $pid"
+  elif [[ "$arg" =~ ^out=.+ ]]; then
+    outfile="${arg#out=}"
+  fi
+done
+
+
+
+
 case "$1" in
   "capture")
-    if [[ ! "$#" -lt 2 ]]; then
-      capture $2
-    else
+
+    if [[ -z "$pid" ]]; then
       read -r -p "Enter process PID: " pid
-      if [[ -n pid ]]; then
+      if [[ -z "$pid" ]]; then
         echo "Error: No process was provided"
         exit 1
       fi
+    fi
 
+    if [[ -z "$outfile" ]]; then
       capture $pid
+    else
+      touch -m "$outfile"
+      capture $pid >> "$outfile"
     fi
     ;;
   "watch")
