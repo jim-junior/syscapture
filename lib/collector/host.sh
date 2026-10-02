@@ -25,3 +25,27 @@ EOF
 
 }
 
+
+
+function host_disk_usage() {
+  df_output=$(df -h | tail -n +2)
+
+  df_table="| Filesystem | Size | Used | Available | Percentage Used | Mounted on |"$'\n'
+  df_table+="|-----|------|-----|----|----|----|"$'\n'
+
+  while read -r fs_name size used avail use_percent mountpoint; do
+        df_table+="| $fs_name | $size | $used | $avail | $use_percent | $mountpoint |"$'\n'
+    done <<< "$df_output"
+
+
+  cat << EOF
+
+Host Storage Usage
+
+$df_table
+
+EOF
+
+}
+
+

@@ -24,4 +24,6 @@ function capture() {
   process_stats $1
 
   process_fds $1
+
+  host_disk_usage
 }
